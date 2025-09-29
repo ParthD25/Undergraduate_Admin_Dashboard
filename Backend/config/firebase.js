@@ -11,11 +11,16 @@ try {
     const serviceAccountPath = path.join(__dirname, '../firebase-service-account.json');
     const serviceAccount = require(serviceAccountPath);
     
+    // Fix private key formatting if needed
+    if (serviceAccount.private_key && typeof serviceAccount.private_key === 'string') {
+      // Ensure proper line breaks in private key
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    }
+    
     // Initialize with the modern Firebase Admin SDK
     app = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       projectId: 'ug-admin-644e2',
-      // Remove deprecated databaseURL - Firestore doesn't need it
     });
     
     console.log('✅ Firebase Admin SDK initialized successfully!');
