@@ -20,6 +20,26 @@ app.get('/', (req, res) => {
   res.json({ message: 'UG Admin Dashboard API' });
 });
 
+// Test Firebase connection
+app.get('/api/test-firebase', async (req, res) => {
+  try {
+    const { db } = require('./config/firebase');
+    const testDoc = await db.collection('test').doc('connection').set({
+      message: 'Firebase connected successfully!',
+      timestamp: new Date()
+    });
+    res.json({ 
+      success: true, 
+      message: 'Firebase Admin SDK connected successfully!' 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -1,14 +1,45 @@
 const admin = require('firebase-admin');
+const path = require('path');
 
-// Initialize Firebase Admin SDK
-const serviceAccount = require('../firebase-service-account.json');
+// Initialize Firebase Admin SDK with modern approach
+let app;
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
-});
+try {
+  // Check if Firebase app is already initialized
+  if (admin.apps.length === 0) {
+    // Path to your downloaded service account key
+    const serviceAccountPath = path.join(__dirname, '../firebase-service-account.json');
+    const serviceAccount = require(serviceAccountPath);
+    
+    // Initialize with the modern Firebase Admin SDK
+    app = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      projectId: 'ug-admin-644e2',
+      // Remove deprecated databaseURL - Firestore doesn't need it
+    });
+    
+    console.log('✅ Firebase Admin SDK initialized successfully!');
+    console.log(`📦 Project ID: ${app.options.projectId}`);
+  } else {
+    app = admin.app(); // Use existing app
+  }
+} catch (error) {
+  console.error('❌ Firebase Admin initialization error:', error.message);
+  console.log('📁 Make sure you have downloaded the service account key and placed it at:');
+  console.log('   Backend/firebase-service-account.json');
+  console.log('');
+  console.log('🔗 Download from: Firebase Console → Project Settings → Service Accounts → Generate new private key');
+}
 
+// Initialize Firestore and Auth with modern SDK
 const db = admin.firestore();
 const auth = admin.auth();
 
-module.exports = { db, auth, admin };
+// Set Firestore settings for better performance
+if (db) {
+  db.settings({
+    ignoreUndefinedProperties: true
+  });
+}
+
+module.exports = { db, auth, admin, app };
