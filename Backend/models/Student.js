@@ -7,7 +7,7 @@ class Student {
     this.phone = data.phone;
     this.grade = data.grade;
     this.country = data.country;
-    this.applicationStatus = data.applicationStatus; // 'Exploring', 'Shortlisting', 'Applying', 'Submitted'
+    this.applicationStatus = data.applicationStatus; // "Exploring", "Shortlisting", "Applying", "Submitted"
     this.lastActive = data.lastActive;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
@@ -15,3 +15,5 @@ class Student {
 
   // Methods will be implemented here
 }
+
+

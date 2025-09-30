@@ -13,3 +13,5 @@ class Note {
 
   // Methods will be implemented here
 }
+
+

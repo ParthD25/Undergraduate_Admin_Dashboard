@@ -1,8 +1,8 @@
 // Firebase configuration
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getAnalytics } from 'firebase/analytics';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAVSIVQmi8X3YlVpdIGd4QX2oCs9H1oizo",
@@ -20,6 +20,8 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 // Initialize Analytics (only in browser environment)
-export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+export const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
 
 export default app;
+
+

@@ -10,10 +10,10 @@ class AuthService {
   
   // Authenticates an admin user with email and password
   async loginAdmin(email, password) {
-    throw new Error (" Use Firebase client's SDK for login, then send ID token to backend for verification.");
+    throw new Error (" Use Firebase client"s SDK for login, then send ID token to backend for verification.");
   }
 
-  // Verifies the Firebase ID token and checks if it's from the authorized domain
+  // Verifies the Firebase ID token and checks if it"s from the authorized domain
   async verifyToken(token) {
     try {
       const decoded = await auth.verifyIdToken(token);
@@ -77,3 +77,5 @@ class AuthService {
 }
 
 module.exports = new AuthService();
+
+

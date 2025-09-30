@@ -1,7 +1,7 @@
 // Authentication context for React frontend
-import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../lib/firebase';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "../lib/firebase";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 const AuthContext = createContext();
 
@@ -38,3 +38,5 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+

@@ -1,4 +1,4 @@
-const { act } = require('react');
+const { act } = require("react");
 const { db } = require("../config/firebase");
 
 // Database utility functions for data operations
@@ -519,7 +519,7 @@ class DatabaseService {
   async createTask(taskData) {
     try {
       const taskWithDefaults = {...taskData,createdAt: new Date(),updatedAt: new Date(),
-        status: 'pending'
+        status: "pending"
       };
       const docRef = await db.collection("tasks").add(taskWithDefaults);
       return {
@@ -574,7 +574,7 @@ class DatabaseService {
   async createOutboxEntry(entryData) {
     try {
       const entryWithDefaults = {
-        ...entryData,createdAt: new Date(),status: 'queued'
+        ...entryData,createdAt: new Date(),status: "queued"
       };
       const docRef = await db.collection("outbox").add(entryWithDefaults);
       return {
@@ -586,6 +586,40 @@ class DatabaseService {
       throw error;
     }
   }
-}
+
+  // Insights operations for all students and thier count totals by status and essay help needs
+  async getInsights() {
+    try {
+
+      const snapshot = await db.collection("students").get();
+      let total = 0;
+      let byStatus = {};
+      let withEssayHelp = 0;
+      
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        total++;
+        
+        const status = data.applicationInfo?.status || "unknown";
+
+        byStatus[status] = (byStatus[status] || 0) + 1;
+        
+        if (data.needsEssayHelp) {
+          withEssayHelp++;
+        }});
+      
+      return {
+        totalStudents: total,
+        studentsByStatus: byStatus,
+        studentsNeedingEssayHelp: withEssayHelp
+      };
+    } catch (error) {
+      console.error(" Error getting insights:", error);
+      throw error;
+    }
+}}
 
 module.exports = new DatabaseService();
+
+

@@ -1,22 +1,22 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const databaseService = require('../services/database');
+const databaseService = require("../services/database");
 
 // Apply auth middleware to all routes
 router.use(require("../middleware/authMiddleware"));
 
 // filter for levels of activity of student
 // GET /api/students - Get all students with filters
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const filters = {
       country: req.query.country,
       applicationStatus: req.query.status,
       grade: req.query.grade,
       limit: req.query.limit ? parseInt(req.query.limit) : undefined,
-      notContactedIn7Days: req.query.notContactedIn7Days === 'true',
-      highIntent: req.query.highIntent === 'true',
-      needsEssayHelp: req.query.needsEssayHelp === 'true'
+      notContactedIn7Days: req.query.notContactedIn7Days === "true",
+      highIntent: req.query.highIntent === "true",
+      needsEssayHelp: req.query.needsEssayHelp === "true"
     };
     
     // Remove undefined filters
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
       data: students
     });
   } catch (error) {
-    console.error('Error fetching students:', error);
+    console.error("Error fetching students:", error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/students/:id - Get specific student
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const student = await databaseService.getStudentById(req.params.id);
     
@@ -50,7 +50,7 @@ router.get('/:id', async (req, res) => {
       data: student
     });
   } catch (error) {
-    const statusCode = error.message.includes('not found') ? 404 : 500;
+    const statusCode = error.message.includes("not found") ? 404 : 500;
     res.status(statusCode).json({
       success: false,
       error: error.message
@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/students - Create new student
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const student = await databaseService.createStudent(req.body);
     
@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/students/:id - Update student info
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const student = await databaseService.updateStudent(req.params.id, req.body);
     
@@ -85,7 +85,7 @@ router.put('/:id', async (req, res) => {
       data: student
     });
   } catch (error) {
-    const statusCode = error.message.includes('not found') ? 404 : 500;
+    const statusCode = error.message.includes("not found") ? 404 : 500;
     res.status(statusCode).json({
       success: false,
       error: error.message
@@ -94,7 +94,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // GET /api/students/:id/timeline - Get student activity timeline
-router.get('/:id/timeline', async (req, res) => {
+router.get("/:id/timeline", async (req, res) => {
   try {
     const activities = await databaseService.getStudentActivities(req.params.id);
     
@@ -111,7 +111,7 @@ router.get('/:id/timeline', async (req, res) => {
 });
 
 // POST /api/students/:id/followup - Send follow-up email (mock)
-router.post('/:id/followup', async (req, res) => {
+router.post("/:id/followup", async (req, res) => {
   try {
     // Get the student ID from the URL
     const studentId = req.params.id;
@@ -141,3 +141,5 @@ router.post('/:id/followup', async (req, res) => {
 });
 
 module.exports = router;
+
+

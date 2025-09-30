@@ -1,27 +1,29 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
 // Apply auth middleware to all routes
 router.use(require("../middleware/authMiddleware"));
 
 // GET /api/communications/:studentId - Get communications for a student
-router.get('/:studentId', async (req, res) => {
+router.get("/:studentId", async (req, res) => {
   // Implementation will go here
 });
 
 // POST /api/communications - Add new communication
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   // Implementation will go here
 });
 
 // PUT /api/communications/:id - Update communication
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   // Implementation will go here
 });
 
 // DELETE /api/communications/:id - Delete communication
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   // Implementation will go here
 });
 
 module.exports = router;
+
+

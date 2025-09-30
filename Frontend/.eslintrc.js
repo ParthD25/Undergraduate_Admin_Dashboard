@@ -1,6 +1,8 @@
 module.exports = {
-  extends: ['next/core-web-vitals'],
+  extends: ["next/core-web-vitals"],
   rules: {
     // Custom rules can be added here
   },
 }
+
+
