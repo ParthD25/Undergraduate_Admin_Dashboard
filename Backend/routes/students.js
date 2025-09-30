@@ -5,6 +5,7 @@ const databaseService = require('../services/database');
 // Apply auth middleware to all routes
 router.use(require("../middleware/authMiddleware"));
 
+// filter for levels of activity of student
 // GET /api/students - Get all students with filters
 router.get('/', async (req, res) => {
   try {
@@ -12,7 +13,10 @@ router.get('/', async (req, res) => {
       country: req.query.country,
       applicationStatus: req.query.status,
       grade: req.query.grade,
-      limit: req.query.limit ? parseInt(req.query.limit) : undefined
+      limit: req.query.limit ? parseInt(req.query.limit) : undefined,
+      notContactedIn7Days: req.query.notContactedIn7Days === 'true',
+      highIntent: req.query.highIntent === 'true',
+      needsEssayHelp: req.query.needsEssayHelp === 'true'
     };
     
     // Remove undefined filters

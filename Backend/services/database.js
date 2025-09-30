@@ -52,6 +52,18 @@ class DatabaseService {
         query = query.where("personalInfo.grade", "==",filters.grade);
       }
       
+      // Quick filters for level activity for student engagement
+      if (filters.notContactedIn7Days) {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        query = query.where("lastContactedAt", "<", sevenDaysAgo);
+      }
+      if (filters.highIntent) {
+        query = query.where("intentScore", ">=", 70);
+      }
+      if (filters.needsEssayHelp) {
+        query = query.where("needsEssayHelp", "==", true);
+      }
+      
       // Add ordering
       query = query.orderBy("createdAt","desc");
       
