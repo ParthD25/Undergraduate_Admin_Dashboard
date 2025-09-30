@@ -1,4 +1,3 @@
-const { act } = require("react");
 const { db } = require("../config/firebase");
 
 // Database utility functions for data operations
