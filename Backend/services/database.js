@@ -6,19 +6,111 @@ class DatabaseService {
   
   // Student operations
   async createStudent(studentData) {
-    // Implementation will go here
+    try {
+      // Add timestamp and default values
+      const studentWithDefaults = {
+        ...studentData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        engagement: {
+          lastActive: new Date(),
+          totalLogins: 0,
+          aiQuestionsAsked: 0,
+          documentsUploaded: 0,
+          profileCompleteness: 30,
+          engagementScore: 0
+        }
+      };
+      
+      // Add to Firestore
+      const docRef = await db.collection('students').add(studentWithDefaults);
+      console.log(' Student created with ID:', docRef.id);
+      
+      return {
+        id: docRef.id,
+        ...studentWithDefaults
+      };
+    } catch (error) {
+      console.error(' Error creating student:', error);
+      throw error;
+    }
   }
 
   async getStudents(filters = {}) {
-    // Implementation will go here
+    try {
+      let query = db.collection('students');
+      
+      // Apply filters
+      if (filters.country) {
+        query = query.where('personalInfo.country', '==', filters.country);
+      }
+      if (filters.applicationStatus) {
+        query = query.where('applicationInfo.status', '==', filters.applicationStatus);
+      }
+      if (filters.grade) {
+        query = query.where('personalInfo.grade', '==', filters.grade);
+      }
+      
+      // Add ordering
+      query = query.orderBy('createdAt', 'desc');
+      
+      // Apply limit if specified
+      if (filters.limit) {
+        query = query.limit(filters.limit);
+      }
+      
+      const snapshot = await query.get();
+      const students = [];
+      
+      snapshot.forEach(doc => {
+        students.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      console.log(` Retrieved ${students.length} students`);
+      return students;
+    } catch (error) {
+      console.error(' Error getting students:', error);
+      throw error;
+    }
   }
 
   async getStudentById(studentId) {
-    // Implementation will go here
+    try {
+      const doc = await db.collection('students').doc(studentId).get();
+      
+      if (!doc.exists) {
+        throw new Error(`Student with ID ${studentId} not found`);
+      }
+      
+      return {
+        id: doc.id,
+        ...doc.data()
+      };
+    } catch (error) {
+      console.error(` Error getting student ${studentId}:`, error);
+      throw error;
+    }
   }
 
   async updateStudent(studentId, updateData) {
-    // Implementation will go here
+    try {
+      const updateWithTimestamp = {
+        ...updateData,
+        updatedAt: new Date()
+      };
+      
+      await db.collection('students').doc(studentId).update(updateWithTimestamp);
+      console.log(' Student updated:', studentId);
+      
+      // Return updated student
+      return await this.getStudentById(studentId);
+    } catch (error) {
+      console.error(` Error updating student ${studentId}:`, error);
+      throw error;
+    }
   }
 
   // Activity operations
