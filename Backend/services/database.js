@@ -502,6 +502,78 @@ class DatabaseService {
       throw error;
     }
   }
+
+  // Task operations
+  async createTask(taskData) {
+    try {
+      const taskWithDefaults = {...taskData,createdAt: new Date(),updatedAt: new Date(),
+        status: 'pending'
+      };
+      const docRef = await db.collection("tasks").add(taskWithDefaults);
+      return {
+        id: docRef.id,
+        ...taskWithDefaults
+      };
+    } catch (error) {
+      console.error(" Error creating task:", error);
+      throw error;
+    }
+  }
+
+  async getTasks(filters = {}) {
+    try {
+      let query = db.collection("tasks");
+
+      if (filters.studentId) {
+        query = query.where("studentId", "==", filters.studentId);}
+
+
+      const snapshot = await query.get();
+      const tasks = [];
+
+      snapshot.forEach(doc => {
+        tasks.push({ id: doc.id, ...doc.data() });
+      });
+      return tasks;
+
+    } catch (error) {
+      console.error(" Error getting tasks:", error);
+
+      throw error;
+    }
+  }
+
+  async updateTask(taskId, updateData) {
+    try {
+      await db.collection("tasks").doc(taskId).update({
+        ...updateData,updatedAt: new Date()
+
+      });
+      return { success: true };
+
+    } catch (error) {
+      console.error(" Error updating task:", error);
+
+      throw error;
+    }
+  }
+
+  // Outbox operations for mock emails
+  async createOutboxEntry(entryData) {
+    try {
+      const entryWithDefaults = {
+        ...entryData,createdAt: new Date(),status: 'queued'
+      };
+      const docRef = await db.collection("outbox").add(entryWithDefaults);
+      return {
+        id: docRef.id,
+        ...entryWithDefaults
+      };
+    } catch (error) {
+      console.error(" Error creating outbox entry:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = new DatabaseService();

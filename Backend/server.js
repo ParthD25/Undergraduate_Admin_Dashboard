@@ -14,6 +14,7 @@ app.use('/api/students', require('./routes/students'));
 app.use('/api/communications', require('./routes/communications'));
 app.use('/api/notes', require('./routes/notes'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tasks', require('./routes/tasks'));
 
 // Basic route
 app.get('/', (req, res) => {

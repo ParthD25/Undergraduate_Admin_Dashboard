@@ -106,4 +106,34 @@ router.get('/:id/timeline', async (req, res) => {
   }
 });
 
+// POST /api/students/:id/followup - Send follow-up email (mock)
+router.post('/:id/followup', async (req, res) => {
+  try {
+    // Get the student ID from the URL
+    const studentId = req.params.id;
+
+    // Get the email details from the request body
+    const { to, subject, body } = req.body;
+
+    // Create an entry in the outbox collection
+    const outboxEntry = await databaseService.createOutboxEntry({
+      studentId,
+      to,
+      subject,
+      body
+    });
+
+    // Send back the outbox entry
+    res.status(201).json({
+      success: true,
+      data: outboxEntry
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
