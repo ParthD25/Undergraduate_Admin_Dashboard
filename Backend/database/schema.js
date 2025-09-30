@@ -1,8 +1,6 @@
-// Firebase Firestore Database Schema
-
+// Firebase Firestore Database Schema file
 // Collections Structure:
-
-// 1. students collection
+// students collection
 const studentSchema = {
   id: "string", // auto-generated document ID
   personalInfo: {
@@ -15,8 +13,8 @@ const studentSchema = {
     parentContact: "string"
   },
   applicationInfo: {
-    status: "string", // "Exploring", "Shortlisting", "Applying", "Submitted"
-    interestedFields: ["string"], // Array of fields like "Engineering", "Medicine", etc.
+    status: "string", 
+    interestedFields: ["string"], // Array of fields like
     targetCountries: ["string"],
     budgetRange: "string",
     preferredIntakeYear: "string"
@@ -33,14 +31,12 @@ const studentSchema = {
   updatedAt: "timestamp"
 };
 
-// 2. activities collection (subcollection of students)
-// Path: students/{studentId}/activities/{activityId}
+// activities collection (subcollection of students)
 const activitySchema = {
   id: "string",
   type: "string", // "login", "ai_question", "document_upload", "profile_update", "college_search", "essay_help"
   description: "string",
   metadata: {
-    // Flexible object for additional data based on activity type
     questionAsked: "string", // for ai_question type
     documentType: "string", // for document_upload type
     collegeSearched: "string", // for college_search type
@@ -52,12 +48,12 @@ const activitySchema = {
   userAgent: "string"
 };
 
-// 3. communications collection
+//communications collection
 const communicationSchema = {
   id: "string",
   studentId: "string",
   type: "string", // "email", "sms", "call", "meeting", "whatsapp"
-  direction: "string", // "inbound", "outbound"
+  direction: "string", 
   subject: "string",
   content: "string",
   status: "string", // "sent", "delivered", "read", "replied", "failed"
@@ -69,7 +65,7 @@ const communicationSchema = {
   tags: ["string"]
 };
 
-// 4. notes collection
+// notes collection
 const noteSchema = {
   id: "string",
   studentId: "string",
@@ -83,7 +79,7 @@ const noteSchema = {
   category: "string" // "general", "follow_up", "concern", "opportunity"
 };
 
-// 5. admins collection (for admin management)
+// admins collection (for admin management)
 const adminSchema = {
   id: "string",
   email: "string",
@@ -95,7 +91,7 @@ const adminSchema = {
   isActive: "boolean"
 };
 
-// 6. tasks collection (for follow-ups and reminders)
+// tasks collection (for follow-ups and reminders)
 const taskSchema = {
   id: "string",
   studentId: "string",
