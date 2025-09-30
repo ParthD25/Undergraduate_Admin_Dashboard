@@ -1,36 +1,78 @@
 // Authentication service for admin login
-const { auth } = require('../config/firebase');
-const jwt = require('jsonwebtoken');
+const { auth } = require("../config/firebase");
+const jwt = require("jsonwebtoken");
+const express = require("express");
+const router = express.Router();
+const AuthService = require("../services/auth");
+const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
 class AuthService {
   
+  // Authenticates an admin user with email and password
   async loginAdmin(email, password) {
-    // Implementation will go here
-    // This will handle Firebase Auth for admin users
+    throw new Error (" Use Firebase client's SDK for login, then send ID token to backend for verification.");
   }
 
+  // Verifies the Firebase ID token and checks if it's from the authorized domain
   async verifyToken(token) {
-    // Implementation will go here
-    // Verify JWT token for API requests
+    try {
+      const decoded = await auth.verifyIdToken(token);
+
+      if (!decoded.email.endsWith("@admin.undergraduates.com")) {
+        throw new Error("Unauthorized domain");
+      }
+
+      return decoded;
+    } catch (err) {
+      throw new Error("Invalid or expired token");
+    }
   }
 
+  // Creates a new admin user in Firebase Auth
   async createAdminUser(userData) {
-    // Implementation will go here
-    // Create new admin user in Firebase Auth
+    try {
+      const user = await auth.createUser({email: userData.email,password: userData.password,displayName: userData.name});
+      return user;
+
+    } catch (err) 
+    {
+      throw new Error(err.message);
+    }
   }
 
+  // Updates custom claims for admin permissions
   async updateAdminPermissions(adminId, permissions) {
-    // Implementation will go here
+    try {await auth.setCustomUserClaims(adminId, { permissions });
+
+      return { success: true };
+
+    } catch (err) {throw new Error(err.message);
+    }
   }
 
+  // Generates a JWT token for the authenticated admin
   generateJWT(adminData) {
-    // Implementation will go here
-    // Generate JWT token for authenticated admin
+    return jwt.sign(
+      {
+        uid: adminData.uid,
+        email: adminData.email,
+        permissions: adminData.permissions || []
+      },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
   }
 
+  // Checks if the admin has the required permission
   async validateAdminAccess(adminId, requiredPermission) {
-    // Implementation will go here
-    // Check if admin has required permissions
+    try {
+      const user = await auth.getUser(adminId);
+      const claims = user.customClaims || {};
+      const perms = claims.permissions || [];
+      return perms.includes(requiredPermission);
+    } catch (err) {
+      throw new Error("Permission validation has failed");
+    }
   }
 }
 
