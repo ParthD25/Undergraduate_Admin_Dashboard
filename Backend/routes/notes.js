@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+// Apply auth middleware to all routes
+router.use(require("../middleware/authMiddleware"));
+
 // GET /api/notes/:studentId - Get notes for a student
 router.get('/:studentId', async (req, res) => {
   // Implementation will go here

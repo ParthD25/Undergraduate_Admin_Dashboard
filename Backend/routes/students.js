@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const databaseService = require('../services/database');
 
+// Apply auth middleware to all routes
+router.use(require("../middleware/authMiddleware"));
+
 // GET /api/students - Get all students with filters
 router.get('/', async (req, res) => {
   try {

@@ -1,34 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const admin = require("firebase-admin");
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault()
-  });
-}
-
-// helper to extract and verify Firebase token
-async function verifyToken(req) {
-  const idToken = req.headers.authorization?.split("Bearer ")[1];
-  if (!idToken) {
-    throw new Error("No token provided");
-  }
-
-  const decoded = await admin.auth().verifyIdToken(idToken);
-
-  // allow only @admin.undergraduates.com emails
-  if (!decoded.email.endsWith("@admin.undergraduates.com")) {
-    throw new Error("Unauthorized email domain");
-  }
-
-  return decoded;
-}
+// Apply auth middleware to all routes
+router.use(require("../middleware/authMiddleware"));
 
 /// api/auth/login
 router.post("/login", async (req, res) => {
   try {
-    const decoded = await verifyToken(req);
+    const decoded = req.user;
     res.json({
       message: "Login successful",
       uid: decoded.uid,
@@ -44,7 +23,7 @@ router.post("/login", async (req, res) => {
 /// api/auth/logout
 router.post("/logout", async (req, res) => {
   try {
-    const decoded = await verifyToken(req);
+    const decoded = req.user;
 
     await admin.auth().revokeRefreshTokens(decoded.uid);
 
@@ -58,7 +37,7 @@ router.post("/logout", async (req, res) => {
 /// api/auth/verify
 router.get("/verify", async (req, res) => {
   try {
-    const decoded = await verifyToken(req);
+    const decoded = req.user;
 
     res.json({valid: true,uid: decoded.uid,email: decoded.email});
 
