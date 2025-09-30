@@ -1,5 +1,5 @@
 const { act } = require('react');
-const { db } = require('../config/firebase');
+const { db } = require("../config/firebase");
 
 // Database utility functions for data operations
 
@@ -24,36 +24,36 @@ class DatabaseService {
       };
       
       // Add to Firestore
-      const docRef = await db.collection('students').add(studentWithDefaults);
-      console.log(' Student created with ID:', docRef.id);
+      const docRef = await db.collection("students").add(studentWithDefaults);
+      console.log(" Student created with ID:", docRef.id);
       
       return {
         id: docRef.id,
         ...studentWithDefaults
       };
     } catch (error) {
-      console.error(' Error creating student:', error);
+      console.error(" Error creating student:", error);
       throw error;
     }
   }
 
   async getStudents(filters = {}) {
     try {
-      let query = db.collection('students');
+      let query = db.collection("students");
       
       // Apply filters
       if (filters.country) {
-        query = query.where('personalInfo.country', '==',filters.country);
+        query = query.where("personalInfo.country", "==",filters.country);
       }
       if (filters.applicationStatus) {
-        query = query.where('applicationInfo.status', '==',filters.applicationStatus);
+        query = query.where("applicationInfo.status", "==",filters.applicationStatus);
       }
       if (filters.grade) {
-        query = query.where('personalInfo.grade', '==',filters.grade);
+        query = query.where("personalInfo.grade", "==",filters.grade);
       }
       
       // Add ordering
-      query = query.orderBy('createdAt','desc');
+      query = query.orderBy("createdAt","desc");
       
       // Apply limit if specified
       if (filters.limit) {
@@ -73,14 +73,14 @@ class DatabaseService {
       console.log(` Retrieved ${students.length} students`);
       return students;
     } catch (error) {
-      console.error(' Error getting students:', error);
+      console.error(" Error getting students:", error);
       throw error;
     }
   }
 
   async getStudentById(studentId) {
     try {
-      const doc = await db.collection('students').doc(studentId).get();
+      const doc = await db.collection("students").doc(studentId).get();
       
       if (!doc.exists) {
         throw new Error(`Student with ID ${studentId} not found`);
@@ -103,8 +103,8 @@ class DatabaseService {
         updatedAt: new Date()
       };
       
-      await db.collection('students').doc(studentId).update(updateWithTimestamp);
-      console.log(' Student updated:', studentId);
+      await db.collection("students").doc(studentId).update(updateWithTimestamp);
+      console.log(" Student updated:", studentId);
       
       // Return the updated student
       return await this.getStudentById(studentId);
@@ -118,7 +118,7 @@ class DatabaseService {
   async addActivity(studentId, activityData) {
     try {
       if (!activityData.type || !activityData.description) {
-        throw new Error('Activity type and description are required');
+        throw new Error("Activity type and description are required");
       }
 
       // Create activity record
@@ -132,26 +132,26 @@ class DatabaseService {
       };
 
       // This will create an activities collection
-      const activityRef = await db.collection('activities').add(activityRecord);
+      const activityRef = await db.collection("activities").add(activityRecord);
 
-      console.log(' Activity has been successfully added for student:', studentId, ' ', activityData.type);
+      console.log(" Activity has been successfully added for student:", studentId, " ", activityData.type);
       // update students engagement metrics based on activity type
       await this.updateStudentEngagement(studentId, activityData.type);
 
       return { id: activityRef.id, ...activityRecord };
     } catch (error) {
-      console.error(' Error adding activity for student ' + studentId + ':', error);
+      console.error(" Error adding activity for student " + studentId + ":", error);
       throw error;
     }
   }
 
   async updateStudentEngagement(studentId, activityType) {
     try {
-      const studentRef = db.collection('students').doc(studentId);
+      const studentRef = db.collection("students").doc(studentId);
       const studentDoc = await studentRef.get();
 
       if (!studentDoc.exists) {
-        throw new Error('Student with ID (' + studentId + ') not found');
+        throw new Error("Student with ID (" + studentId + ") not found");
       }
 
       const currentEngagement = studentDoc.data().engagement || {};
@@ -161,13 +161,13 @@ class DatabaseService {
       };
 
       // Update specific counters based on activity type
-      if (activityType === 'login') {
+      if (activityType === "login") {
         updates.totalLogins = (currentEngagement.totalLogins || 0) + 1;
       }
-      else if (activityType === 'ai_question') {
+      else if (activityType === "ai_question") {
         updates.aiQuestionsAsked = (currentEngagement.aiQuestionsAsked || 0) + 1;
       }
-      else if (activityType === 'document_upload') {
+      else if (activityType === "document_upload") {
         updates.documentsUploaded = (currentEngagement.documentsUploaded || 0) + 1;
       }
 
@@ -176,19 +176,19 @@ class DatabaseService {
         updatedAt: new Date()
       });
 
-      console.log(' Updated engagement for student ' + studentId);
+      console.log(" Updated engagement for student " + studentId);
     } catch (error) {
-      console.error(' Error updating engagement for student ' + studentId + ':', error);
+      console.error(" Error updating engagement for student " + studentId + ":", error);
       throw error;
     }
   }
 
   async getStudentActivities(studentId, limit = 50) {
     try {
-      const activitiesRef = db.collection('activities');
+      const activitiesRef = db.collection("activities");
       const query = activitiesRef
-        .where('studentId', '==', studentId)
-        .orderBy('timestamp', 'desc')
+        .where("studentId", "==", studentId)
+        .orderBy("timestamp", "desc")
         .limit(limit);
 
       const snapshot = await query.get();
@@ -201,10 +201,10 @@ class DatabaseService {
         });
       });
 
-      console.log(' Retrieved ' + activities.length + ' activities for student ' + studentId);
+      console.log(" Retrieved " + activities.length + " activities for student " + studentId);
       return activities;
     } catch (error) {
-      console.error(' Error getting activities for student ' + studentId + ':', error);
+      console.error(" Error getting activities for student " + studentId + ":", error);
       throw error;
     }
   }
@@ -213,7 +213,7 @@ class DatabaseService {
   async addCommunication(communicationData) {
     try {
       if (!communicationData.studentId || !communicationData.type) {
-        throw new Error('Student ID and communication type are required');
+        throw new Error("Student ID and communication type are required");
       }
 
       const communicationRecord = {
@@ -223,22 +223,22 @@ class DatabaseService {
         updatedAt: new Date()
       };
 
-      const commRef = await db.collection('communications').add(communicationRecord);
-      console.log(' Communication added for student ' + communicationData.studentId);
+      const commRef = await db.collection("communications").add(communicationRecord);
+      console.log(" Communication added for student " + communicationData.studentId);
 
       return { id: commRef.id, ...communicationRecord };
     } catch (error) {
-      console.error(' Error adding communication:', error);
+      console.error(" Error adding communication:", error);
       throw error;
     }
   }
 
   async getCommunications(studentId) {
     try {
-      const commRef = db.collection('communications');
+      const commRef = db.collection("communications");
       const query = commRef
-        .where('studentId', '==', studentId)
-        .orderBy('timestamp', 'desc');
+        .where("studentId", "==", studentId)
+        .orderBy("timestamp", "desc");
 
       const snapshot = await query.get();
       const communications = [];
@@ -250,10 +250,10 @@ class DatabaseService {
         });
       });
 
-      console.log(' Retrieved ' + communications.length + ' communications for student ' + studentId);
+      console.log(" Retrieved " + communications.length + " communications for student " + studentId);
       return communications;
     } catch (error) {
-      console.error(' Error getting communications for student ' + studentId + ':', error);
+      console.error(" Error getting communications for student " + studentId + ":", error);
       throw error;
     }
   }
@@ -265,12 +265,13 @@ class DatabaseService {
         updatedAt: new Date()
       };
 
-      await db.collection('communications').doc(communicationId).update(updateWithTimestamp);
-      console.log(' Communication updated: ' + communicationId);
+      await db.collection("communications").doc(communicationId).update(updateWithTimestamp);
+
+      console.log(" Communication updated: " + communicationId);
 
       return { id: communicationId, ...updateWithTimestamp };
     } catch (error) {
-      console.error(' Error updating communication ' + communicationId + ':', error);
+      console.error(" Error updating communication " + communicationId + ":", error);
       throw error;
     }
   }
@@ -279,32 +280,28 @@ class DatabaseService {
   async addNote(noteData) {
     try {
       if (!noteData.studentId || !noteData.content) {
-        throw new Error('Student ID and note content are required');
+        throw new Error("Student ID and note content are required");
       }
 
-      const noteRecord = {
-        ...noteData,
-        timestamp: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date()
+      const noteRecord = {...noteData,timestamp: new Date(),createdAt: new Date(),updatedAt: new Date()
       };
 
-      const noteRef = await db.collection('notes').add(noteRecord);
-      console.log(' Note added for student ' + noteData.studentId);
+      const noteRef = await db.collection("notes").add(noteRecord);
+      console.log(" Note added for student " + noteData.studentId);
 
       return { id: noteRef.id, ...noteRecord };
     } catch (error) {
-      console.error(' Error adding note:', error);
+      console.error(" Error adding note:", error);
       throw error;
     }
   }
 
   async getNotes(studentId) {
     try {
-      const notesRef = db.collection('notes');
+      const notesRef = db.collection("notes");
       const query = notesRef
-        .where('studentId', '==', studentId)
-        .orderBy('timestamp', 'desc');
+        .where("studentId", "==", studentId)
+        .orderBy("timestamp", "desc");
 
       const snapshot = await query.get();
       const notes = [];
@@ -316,10 +313,10 @@ class DatabaseService {
         });
       });
 
-      console.log(' Retrieved ' + notes.length + ' notes for student ' + studentId);
+      console.log(" Retrieved " + notes.length + " notes for student " + studentId);
       return notes;
     } catch (error) {
-      console.error(' Error getting notes for student ' + studentId + ':', error);
+      console.error(" Error getting notes for student " + studentId + ":", error);
       throw error;
     }
   }
@@ -331,24 +328,24 @@ class DatabaseService {
         updatedAt: new Date()
       };
 
-      await db.collection('notes').doc(noteId).update(updateWithTimestamp);
-      console.log(' Note updated: ' + noteId);
+      await db.collection("notes").doc(noteId).update(updateWithTimestamp);
+      console.log(" Note updated: " + noteId);
 
       return { id: noteId, ...updateWithTimestamp };
     } catch (error) {
-      console.error(' Error updating note ' + noteId + ':', error);
+      console.error(" Error updating note " + noteId + ":", error);
       throw error;
     }
   }
 
   async deleteNote(noteId) {
     try {
-      await db.collection('notes').doc(noteId).delete();
-      console.log(' Note deleted: ' + noteId);
+      await db.collection("notes").doc(noteId).delete();
+      console.log(" Note deleted: " + noteId);
 
-      return { success: true, message: 'Note deleted successfully' };
+      return { success: true, message: "Note deleted successfully" };
     } catch (error) {
-      console.error(' Error deleting note ' + noteId + ':', error);
+      console.error(" Error deleting note " + noteId + ":", error);
       throw error;
     }
   }
@@ -357,42 +354,39 @@ class DatabaseService {
   async createTask(taskData) {
     try {
       if (!taskData.studentId || !taskData.title) {
-        throw new Error('Student ID and task title are required');
+        throw new Error("Student ID and task title are required");
       }
 
-      const taskRecord = {
-        ...taskData,
-        status: taskData.status || 'pending',
-        priority: taskData.priority || 'medium',
+      const taskRecord = {...taskData,status: taskData.status || "pending",priority: taskData.priority || "medium",
         createdAt: new Date(),
         updatedAt: new Date()
       };
 
-      const taskRef = await db.collection('tasks').add(taskRecord);
-      console.log(' Task created for student ' + taskData.studentId);
+      const taskRef = await db.collection("tasks").add(taskRecord);
+      console.log(" Task created for student " + taskData.studentId);
 
       return { id: taskRef.id, ...taskRecord };
     } catch (error) {
-      console.error(' Error creating task:', error);
+      console.error(" Error creating task:", error);
       throw error;
     }
   }
 
   async getTasks(filters = {}) {
     try {
-      let query = db.collection('tasks');
+      let query = db.collection("tasks");
 
       if (filters.studentId) {
-        query = query.where('studentId', '==', filters.studentId);
+        query = query.where("studentId", "==", filters.studentId);
       }
       if (filters.status) {
-        query = query.where('status', '==', filters.status);
+        query = query.where("status", "==", filters.status);
       }
       if (filters.assignedTo) {
-        query = query.where('assignedTo', '==', filters.assignedTo);
+        query = query.where("assignedTo", "==", filters.assignedTo);
       }
 
-      query = query.orderBy('createdAt', 'desc');
+      query = query.orderBy("createdAt", "desc");
 
       if (filters.limit) {
         query = query.limit(filters.limit);
@@ -408,10 +402,10 @@ class DatabaseService {
         });
       });
 
-      console.log(' Retrieved ' + tasks.length + ' tasks');
+      console.log(" Retrieved " + tasks.length + " tasks");
       return tasks;
     } catch (error) {
-      console.error(' Error getting tasks:', error);
+      console.error(" Error getting tasks:", error);
       throw error;
     }
   }
@@ -423,12 +417,12 @@ class DatabaseService {
         updatedAt: new Date()
       };
 
-      await db.collection('tasks').doc(taskId).update(updateWithTimestamp);
-      console.log(' Task updated: ' + taskId);
+      await db.collection("tasks").doc(taskId).update(updateWithTimestamp);
+      console.log(" Task updated: " + taskId);
 
       return { id: taskId, ...updateWithTimestamp };
     } catch (error) {
-      console.error(' Error updating task ' + taskId + ':', error);
+      console.error(" Error updating task " + taskId + ":", error);
       throw error;
     }
   }
@@ -436,7 +430,7 @@ class DatabaseService {
   // Analytics and insights
   async getStudentStats() {
     try {
-      const studentsSnapshot = await db.collection('students').get();
+      const studentsSnapshot = await db.collection("students").get();
       const totalStudents = studentsSnapshot.size;
 
       let stats = {
@@ -449,9 +443,9 @@ class DatabaseService {
 
       studentsSnapshot.forEach(doc => {
         const student = doc.data();
-        const status = student.applicationInfo?.status || 'Unknown';
-        const country = student.personalInfo?.country || 'Unknown';
-        const grade = student.personalInfo?.grade || 'Unknown';
+        const status = student.applicationInfo?.status || "Unknown";
+        const country = student.personalInfo?.country || "Unknown";
+        const grade = student.personalInfo?.grade || "Unknown";
         const engagement = student.engagement?.engagementScore || 0;
 
         stats.byStatus[status] = (stats.byStatus[status] || 0) + 1;
@@ -460,24 +454,24 @@ class DatabaseService {
         stats.totalEngagement += engagement;
       });
 
-      console.log(' Retrieved student statistics');
+      console.log(" Retrieved student statistics");
       return stats;
     } catch (error) {
-      console.error(' Error getting student stats:', error);
+      console.error(" Error getting student stats:", error);
       throw error;
     }
   }
 
   async getEngagementMetrics(dateRange) {
     try {
-      const activitiesRef = db.collection('activities');
+      const activitiesRef = db.collection("activities");
       let query = activitiesRef;
 
       if (dateRange && dateRange.start) {
-        query = query.where('timestamp', '>=', new Date(dateRange.start));
+        query = query.where("timestamp", ">=", new Date(dateRange.start));
       }
       if (dateRange && dateRange.end) {
-        query = query.where('timestamp', '<=', new Date(dateRange.end));
+        query = query.where("timestamp", "<=", new Date(dateRange.end));
       }
 
       const snapshot = await query.get();
@@ -501,10 +495,10 @@ class DatabaseService {
         });
       });
 
-      console.log(' Retrieved engagement metrics');
+      console.log(" Retrieved engagement metrics");
       return metrics;
     } catch (error) {
-      console.error(' Error getting engagement metrics:', error);
+      console.error(" Error getting engagement metrics:", error);
       throw error;
     }
   }
