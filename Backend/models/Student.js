@@ -14,6 +14,35 @@ class Student {
   }
 
   // Methods will be implemented here
+  // Check if student is currently active (active within last 7 days)
+  isActive() {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    return new Date(this.lastActive) > sevenDaysAgo;
+  }
+
+  // Get student's full name (assuming name is full name)
+  getFullName() {
+    return this.name;
+  }
+
+  // Check if student needs essay help
+  needsEssayHelp() {
+    // This would be based on some field, for now return false
+    return false;
+  }
+
+  // Get student's application progress as percentage
+  getProgressPercentage() {
+    const statusProgress = {
+      "Exploring": 25,
+      "Shortlisting": 50,
+      "Applying": 75,
+      "Submitted": 100
+    };
+    return statusProgress[this.applicationStatus] || 0;
+  }
 }
+
+module.exports = Student;
 
 

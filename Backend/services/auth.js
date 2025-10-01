@@ -10,10 +10,30 @@ class AuthService {
   
   // Authenticates an admin user with email and password
   async loginAdmin(email, password) {
-    throw new Error (" Use Firebase client"s SDK for login, then send ID token to backend for verification.");
+    // Note: Actual login should be done via Firebase Client SDK
+    // This method can be used for server-side verification after client login has occurred
+    try {
+      // Get user by email
+      const userRecord = await auth.getUserByEmail(email);
+      
+      // Check if user has admin permissions (set via custom claims)
+      const claims = userRecord.customClaims || {};
+      if (!claims.permissions || !claims.permissions.includes('admin')) {
+        throw new Error('User does not have admin permissions');
+      }
+      
+      return {
+        uid: userRecord.uid,
+        email: userRecord.email,
+        name: userRecord.displayName,
+        permissions: claims.permissions
+      };
+    } catch (error) {
+      throw new Error('Admin authentication failed: ' + error.message);
+    }
   }
 
-  // Verifies the Firebase ID token and checks if it"s from the authorized domain
+  // Verifies the Firebase ID token and checks if it"s from the authorized domain endsWith("@admin.undergraduates.com"))  
   async verifyToken(token) {
     try {
       const decoded = await auth.verifyIdToken(token);

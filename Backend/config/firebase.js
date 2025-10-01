@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const path = require("path");
 
 // Initialize Firebase Admin SDK with modern approach
 let app;
@@ -7,19 +6,10 @@ let app;
 try {
   // Check if Firebase app is already initialized
   if (admin.apps.length === 0) {
-    // Path to your downloaded service account key
-    const serviceAccountPath = path.join(__dirname, "../firebase-service-account.json");
-    const serviceAccount = require(serviceAccountPath);
-    
-    // Fix private key formatting if needed
-    if (serviceAccount.private_key && typeof serviceAccount.private_key === "string") {
-      // Ensure proper line breaks in private key
-      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
-    }
-    
-    // Initialize with the modern Firebase Admin SDK
+    // For development, use application default credentials
+    // This works with Firebase CLI login or Google Cloud SDK
     app = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.applicationDefault(),
       projectId: "ug-admin-644e2",
     });
     
@@ -30,10 +20,13 @@ try {
   }
 } catch (error) {
   console.error("❌ Firebase Admin initialization error:", error.message);
-  console.log("📁 Make sure you have downloaded the service account key and placed it at:");
-  console.log("   Backend/firebase-service-account.json");
+  console.log("� For development, make sure you have:");
+  console.log("   1. Firebase CLI installed: npm install -g firebase-tools");
+  console.log("   2. Logged in: firebase login");
+  console.log("   3. Or set GOOGLE_APPLICATION_CREDENTIALS environment variable");
   console.log("");
-  console.log("🔗 Download from: Firebase Console → Project Settings → Service Accounts → Generate new private key");
+  console.log("🔗 Alternative: Download service account key from Firebase Console");
+  console.log("   and place it at: Backend/firebase-service-account.json");
 }
 
 // Initialize Firestore and Auth with modern SDK

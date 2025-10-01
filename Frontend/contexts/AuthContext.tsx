@@ -1,32 +1,48 @@
-// Authentication context for React frontend
-import { createContext, useContext, useEffect, useState } from "react";
+// Authentication context for React frontend using Firebase Auth 
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
-const AuthContext = createContext();
-
-export function useAuth() {
-  return useContext(AuthContext);
+interface AuthContextType {
+  currentUser: User | null;
+  login: (email: string, password: string) => Promise<any>;
+  logout: () => Promise<void>;
 }
 
-export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) { 
+
+  throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  function login(email, password) {
-    // Implementation will go here
-  }
+  function login(email: string, password: string) {
+
+  return signInWithEmailAndPassword(auth, email, password);}
 
   function logout() {
-    // Implementation will go here
+    return signOut(auth);
   }
 
   useEffect(() => {
-    // Implementation will go here
-    // Set up auth state listener
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    } 
+  );
+
+    return unsubscribe;
   }, []);
 
-  const value = {
+  const value: AuthContextType = {
     currentUser,
     login,
     logout

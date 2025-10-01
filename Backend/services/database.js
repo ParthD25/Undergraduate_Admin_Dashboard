@@ -606,7 +606,8 @@ class DatabaseService {
         
         if (data.needsEssayHelp) {
           withEssayHelp++;
-        }});
+        }
+      });
       
       return {
         totalStudents: total,
@@ -617,7 +618,115 @@ class DatabaseService {
       console.error(" Error getting insights:", error);
       throw error;
     }
-}}
+  }
+
+  // Note operations
+  async createNote(noteData) {
+    try {
+      const noteWithDefaults = {
+        ...noteData,
+        timestamp: new Date(),
+        isPrivate: noteData.isPrivate || false,
+        tags: noteData.tags || []
+      };
+      const docRef = await db.collection("notes").add(noteWithDefaults);
+      return {
+        id: docRef.id,
+        ...noteWithDefaults
+      };
+    } catch (error) {
+      console.error(" Error creating note:", error);
+      throw error;
+    }
+  }
+
+  async getNotesByStudentId(studentId) {
+    try {
+      const snapshot = await db.collection("notes").where("studentId", "==", studentId).orderBy("timestamp", "desc").get();
+      const notes = [];
+      snapshot.forEach(doc => {
+        notes.push({ id: doc.id, ...doc.data() });
+      });
+      return notes;
+    } catch (error) {
+      console.error(" Error getting notes:", error);
+      throw error;
+    }
+  }
+
+  async updateNote(noteId, updateData) {
+    try {
+      await db.collection("notes").doc(noteId).update(updateData);
+      return { success: true };
+    } catch (error) {
+      console.error(" Error updating note:", error);
+      throw error;
+    }
+  }
+
+  async deleteNote(noteId) {
+    try {
+      await db.collection("notes").doc(noteId).delete();
+      return { success: true };
+    } catch (error) {
+      console.error(" Error deleting note:", error);
+      throw error;
+    }
+  }
+
+  // Communication operations
+  async createCommunication(commData) {
+    try {
+      const commWithDefaults = {
+        ...commData,
+        timestamp: new Date(),
+        status: commData.status || "sent"
+      };
+      const docRef = await db.collection("communications").add(commWithDefaults);
+      return {
+        id: docRef.id,
+        ...commWithDefaults
+      };
+    } catch (error) {
+      console.error(" Error creating communication:", error);
+      throw error;
+    }
+  }
+
+  async getCommunicationsByStudentId(studentId) {
+    try {
+      const snapshot = await db.collection("communications").where("studentId", "==", studentId).orderBy("timestamp", "desc").get();
+      const communications = [];
+      snapshot.forEach(doc => {
+        communications.push({ id: doc.id, ...doc.data() });
+      });
+      return communications;
+    } catch (error) {
+      console.error(" Error getting communications:", error);
+      throw error;
+    }
+  }
+
+  async updateCommunication(commId, updateData) {
+    try {
+      await db.collection("communications").doc(commId).update(updateData);
+      return { success: true };
+    } catch (error) {
+      console.error(" Error updating communication:", error);
+      throw error;
+    }
+  }
+
+  async deleteCommunication(commId) {
+    try {
+      await db.collection("communications").doc(commId).delete();
+      return { success: true };
+    } catch (error) {
+      console.error(" Error deleting communication:", error);
+      throw error;
+    }
+  }
+}
 
 module.exports = new DatabaseService();
 
