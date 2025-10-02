@@ -104,13 +104,6 @@ ug-admin-dashboard/
 - **Task**: Follow-ups and reminders for admin team
 
 
-## Next Steps
-1. Implement authentication flow
-2. Build student data fetching and display
-3. Create communication logging system
-4. Develop note-taking functionality
-5. Add analytics and reporting features
-6. Integrate with Customer.io for email automation
 
 ## Contributing
 This is an internal project for undergraduation.com. 
