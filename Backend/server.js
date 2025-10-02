@@ -9,6 +9,15 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Global error handler
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // Routes
 app.use("/api/students", require("./routes/students"));
 app.use("/api/communications", require("./routes/communications"));
@@ -30,20 +39,21 @@ app.get("/api/test-firebase", async (req, res) => {
       message: "Firebase connected successfully!",
       timestamp: new Date()
     });
-    res.json({ 
-      success: true, 
-      message: "Firebase Admin SDK connected successfully!" 
+    res.json({
+      success: true,
+      message: "Firebase Admin SDK connected successfully!"
     });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Server started at: ${new Date().toISOString()}`);
 });
 
 
