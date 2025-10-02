@@ -1,0 +1,11 @@
+{"users": [
+{
+  "localId": "y455sKzs6FcURiDoa99RgGsgwey2",
+  "email": "parth@admin.undergraduates.com",
+  "emailVerified": false,
+  "passwordHash": "BvkvY07dOrETVGYWPgjGWAlxAnQRlV3S+gBmKHPP4g/eyZHHl6rGz/eaksExYToB0WhU533XPgiXnHUVU/kctA==",
+  "salt": "DLdLCix3UMaKsg==",
+  "createdAt": "1759434481970",
+  "disabled": false,
+  "providerUserInfo": []
+}]}

@@ -95,15 +95,6 @@ ug-admin-dashboard/
 4. Create admin users in Firebase Auth
 5. Set up Firestore security rules for admin access
 
-## API Endpoints
-- `GET /api/students` - Get all students with filters
-- `GET /api/students/:id` - Get specific student details
-- `PUT /api/students/:id` - Update student information
-- `GET /api/communications/:studentId` - Get student communications
-- `POST /api/communications` - Add new communication
-- `GET /api/notes/:studentId` - Get student notes
-- `POST /api/notes` - Add new note
-- `POST /api/auth/login` - Admin login
 
 ## Data Models
 - **Student**: Personal info, application status, engagement metrics
@@ -112,8 +103,6 @@ ug-admin-dashboard/
 - **Note**: Internal team notes with privacy and categorization
 - **Task**: Follow-ups and reminders for admin team
 
-## Development Status
-This is the initial project structure with placeholder implementations. Core functionality needs to be implemented in the respective component and service files.
 
 ## Next Steps
 1. Implement authentication flow
@@ -124,7 +113,5 @@ This is the initial project structure with placeholder implementations. Core fun
 6. Integrate with Customer.io for email automation
 
 ## Contributing
-This is an internal project for undergraduation.com. Follow the established code style and create pull requests for any changes.
+This is an internal project for undergraduation.com. 
 
-## Deadline
-Target completion: October 2, 2025
